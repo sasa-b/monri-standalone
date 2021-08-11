@@ -15,7 +15,7 @@ use SasaB\Monri\Model\Customer\Address;
 use SasaB\Monri\Model\Customer\Email;
 use SasaB\Monri\Model\Customer\FullName;
 use SasaB\Monri\Model\Customer\Phone;
-use Webmozart\Assert\Assert;
+
 
 final class Customer implements Arrayable
 {
@@ -78,10 +78,9 @@ final class Customer implements Arrayable
         return $this->email;
     }
 
-    public function setEmail(Email $email): self
+    public function setEmail(Email $email): void
     {
         $this->email = $email;
-        return $this;
     }
 
     public function getPhone(): Phone
@@ -89,10 +88,9 @@ final class Customer implements Arrayable
         return $this->phone;
     }
 
-    public function setPhone(Phone $phone): self
+    public function setPhone(Phone $phone): void
     {
         $this->phone = $phone;
-        return $this;
     }
 
     public function getAddress(): Address
@@ -100,9 +98,8 @@ final class Customer implements Arrayable
         return $this->address;
     }
 
-    public function setAddress(Address $address): self
+    public function setAddress(Address $address): void
     {
         $this->address = $address;
-        return $this;
     }
 }

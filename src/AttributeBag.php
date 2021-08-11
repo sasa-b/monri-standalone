@@ -14,7 +14,7 @@ abstract class AttributeBag implements \ArrayAccess, \IteratorAggregate, \Counta
 {
     protected array $attributes = [];
 
-    protected static $softUnset = false;
+    protected static bool $softUnset = false;
 
     public function __construct(array $attributes = [])
     {

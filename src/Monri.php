@@ -16,49 +16,106 @@ use SasaB\Monri\Client\TransactionType;
 
 use SasaB\Monri\Model\Order;
 use SasaB\Monri\Model\Customer;
+use Webmozart\Assert\Assert;
 
 final class Monri
 {
+    use CanDigest;
+
     private Client $client;
     private Options $options;
+    private string $token;
+    private string $key;
 
-    public function __construct(Client $client, Options $options)
+    public function __construct(Client $client, Options $options, string $token, string $key)
     {
         $this->client = $client;
         $this->options = $options;
+        $this->setToken($token);
+        $this->key = $key;
     }
 
-    public static function api(?string $token = null, ?string $key = null, ?string $url = null): self
+    public static function api(string $token = null, string $key = null, Options $options = null): self
     {
-        return new self(
-            Client::default($token, $key, $url),
-            Options::default()
-        );
+        $token ??= env('MONRI_TOKEN');
+        $key ??= env('MONRI_KEY');
+        $options ??= Options::default();
+
+        Assert::notNull($token, 'Invalid token value. Expected alphanumeric value. Got: null');
+        Assert::notNull($key, 'Invalid key value. Expected alphanumeric value. Got: null');
+
+        return new self(Client::prod(), $options, $token, $key);
+    }
+
+    public static function testApi(string $token = null, string $key = null, Options $options = null): self
+    {
+        $token ??= env('MONRI_TOKEN');
+        $key ??= env('MONRI_KEY');
+        $options ??= Options::default();
+
+        Assert::notNull($token, 'Invalid token value. Expected alphanumeric value. Got: null');
+        Assert::notNull($key, 'Invalid key value. Expected alphanumeric value. Got: null');
+
+        return new self(Client::dev(), $options, $token, $key);
     }
 
     public function authorize(Customer $customer, Order $order, ?Options $options = null): Response
     {
-        $this->client->transaction(TransactionType::AUTHORIZATION, array_merge($customer->asArray(), $order->asArray()));
+        $digest = $this->digest(
+            $this->key,
+            $order->getNumber()->value(),
+            $order->getAmount()->value(),
+            $order->getCurrency()->value()
+        );
+
+        $request = array_merge(
+            $customer->asArray(),
+            $order->asArray(),
+            ['authenticity_token' => $this->token, 'digest' => $digest]
+        );
+
+        if ($options) {
+            $request = array_merge($request, $options->asArray());
+        }
+
+        return $this->client->transaction(TransactionType::AUTHORIZATION, $request);
     }
 
-    public function purchase(?Options $options = null): Response
+    public function purchase(Customer $customer, Order $order, ?Options $options = null): Response
     {
-        $this->client->transaction(TransactionType::PURCHASE);
+        $digest = $this->digest(
+            $this->key,
+            $order->getNumber()->value(),
+            $order->getAmount()->value(),
+            $order->getCurrency()->value()
+        );
+
+        $request = array_merge(
+            $customer->asArray(),
+            $order->asArray(),
+            ['authenticity_token' => $this->token, 'digest' => $digest]
+        );
+
+        if ($options) {
+            $request = array_merge($request, $options->asArray());
+        }
+
+        return $this->client->transaction(TransactionType::PURCHASE, $request);
     }
 
-    public function capture(?Options $options = null): Response
+    public function capture(Order $order, ?Options $options = null): Response
     {
-        $this->client->transaction(TransactionType::CAPTURE);
+        return $this->client->transaction(TransactionType::CAPTURE);
     }
 
-    public function refund(?Options $options = null): Response
+    public function refund(Order $order, ?Options $options = null): Response
     {
-        $this->client->transaction(TransactionType::REFUND);
+        return $this->client->transaction(TransactionType::REFUND);
     }
 
-    public function void(?Options $options = null): Response
+    public function void(Order $order, ?Options $options = null): Response
     {
-        $this->client->transaction(TransactionType::VOID);
+        return $this->client->transaction(TransactionType::VOID);
     }
 
     public function getClient(): Client
@@ -79,5 +136,26 @@ final class Monri
     public function setOptions(Options $options): void
     {
         $this->options = $options;
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): void
+    {
+        Assert::length($token, 40, 'Invalid token length. Expected 40 characters. Got: %s');
+        $this->token = $token;
+    }
+
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
     }
 }

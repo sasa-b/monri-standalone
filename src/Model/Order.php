@@ -15,7 +15,6 @@ use SasaB\Monri\Model\Order\Amount;
 use SasaB\Monri\Model\Order\Currency;
 use SasaB\Monri\Model\Order\OrderInfo;
 use SasaB\Monri\Model\Order\OrderNumber;
-use Webmozart\Assert\Assert;
 
 final class Order implements Arrayable
 {
@@ -75,10 +74,9 @@ final class Order implements Arrayable
         return $this->info;
     }
 
-    public function setInfo(OrderInfo $info): self
+    public function setInfo(OrderInfo $info): void
     {
         $this->info = $info;
-        return $this;
     }
 
     public function getNumber(): OrderNumber
@@ -86,9 +84,28 @@ final class Order implements Arrayable
         return $this->number;
     }
 
-    public function setNumber(OrderNumber $number): self
+    public function setNumber(OrderNumber $number): void
     {
         $this->number = $number;
-        return $this;
+    }
+
+    public function getAmount(): Amount
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(Amount $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function getCurrency(): Currency
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(Currency $currency): void
+    {
+        $this->currency = $currency;
     }
 }

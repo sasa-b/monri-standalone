@@ -2,21 +2,14 @@
 
 ### Environment Variables
 
-MONRI_FORM_URL=https://ipgtest.monri.com/v2/form
-
+```
 MONRI_SUCCESS_URL=
-
 MONRI_CANCEL_URL=
-
-MONRI_REDIRECT_ON=
-
 MONRI_CALLBACK_URL=
-
 MONRI_TOKEN=
-
 MONRI_KEY=
-
 MONRI_LANG=
+```
 
 ### Transaction types
 

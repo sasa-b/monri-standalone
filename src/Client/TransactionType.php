@@ -12,12 +12,8 @@ namespace SasaB\Monri\Client;
 interface TransactionType
 {
     public const AUTHORIZATION = 'authorize';
-
     public const PURCHASE = 'purchase';
-
     public const CAPTURE = 'capture';
-
     public const REFUND = 'refund';
-
     public const VOID = 'void';
 }

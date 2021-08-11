@@ -15,6 +15,11 @@ use Webmozart\Assert\Assert;
 
 final class Currency extends StringObject
 {
+    public const USD = 'USD';
+    public const BAM = 'BAM';
+    public const HRK = 'HRK';
+    public const EUR = 'EUR';
+
     public function __construct(string $currency)
     {
         Assert::inArray($currency, [

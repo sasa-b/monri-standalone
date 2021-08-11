@@ -14,7 +14,10 @@
     "psr-4": {
       "SasaB\\Monri\\": "src/",
       "SasaB\\Monri\\Test\\": "/tests"
-    }
+    },
+    "files": [
+      "src/env.php"
+    ]
   },
   "require": {
     "php": "^7.4 | >=8.0",
