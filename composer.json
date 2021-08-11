@@ -12,8 +12,15 @@
   ],
   "autoload": {
     "psr-4": {
-      "SasaB\\Monri\\": "src/",
-      "SasaB\\Monri\\Test\\": "/tests"
+      "SasaB\\Monri\\": "src/"
+    },
+    "files": [
+      "src/env.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SasaB\\Monri\\Tests\\": "tests/"
     },
     "files": [
       "src/env.php"

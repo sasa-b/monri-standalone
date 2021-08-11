@@ -18,6 +18,7 @@ class ComposerStaticInitcc16883c1a7cbcbf0c2abc0cfba82831
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        '3489b5d43d26db83d4d1073cc443e408' => __DIR__ . '/../..' . '/src/env.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -166,7 +167,7 @@ class ComposerStaticInitcc16883c1a7cbcbf0c2abc0cfba82831
         ),
         'SasaB\\Monri\\Test\\' => 
         array (
-            0 => '/tests',
+            0 => __DIR__ . '/../..' . '/tests',
         ),
         'SasaB\\Monri\\' => 
         array (
