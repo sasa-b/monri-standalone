@@ -61,28 +61,37 @@ final class Monri
 
     public function authorize(Customer $customer, Order $order, ?Options $options = null): Response
     {
-        $digest = $this->digest(
-            $this->key,
-            $order->getNumber()->value(),
-            $order->getAmount()->value(),
-            $order->getCurrency()->value()
+        return $this->client->transaction(
+            TransactionType::AUTHORIZATION,
+            $this->buildFormBody($customer, $order, $options ?? Options::default())
         );
-
-        $request = array_merge(
-            $customer->asArray(),
-            $order->asArray(),
-            ['authenticity_token' => $this->token, 'digest' => $digest]
-        );
-
-        if ($options) {
-            $request = array_merge($request, $options->asArray());
-        }
-
-        return $this->client->transaction(TransactionType::AUTHORIZATION, $request);
     }
 
     public function purchase(Customer $customer, Order $order, ?Options $options = null): Response
     {
+        return $this->client->transaction(
+            TransactionType::PURCHASE,
+            $this->buildFormBody($customer, $order, $options ?? Options::default())
+        );
+    }
+
+    public function capture(Order $order): Response
+    {
+        return $this->client->transaction(TransactionType::CAPTURE, $this->buildXmlBody($order));
+    }
+
+    public function refund(Order $order): Response
+    {
+        return $this->client->transaction(TransactionType::REFUND, $this->buildXmlBody($order));
+    }
+
+    public function void(Order $order): Response
+    {
+        return $this->client->transaction(TransactionType::VOID, $this->buildXmlBody($order));
+    }
+
+    private function buildFormBody(Customer $customer, Order $order, Options $options): array
+    {
         $digest = $this->digest(
             $this->key,
             $order->getNumber()->value(),
@@ -90,32 +99,24 @@ final class Monri
             $order->getCurrency()->value()
         );
 
-        $request = array_merge(
+        return array_merge(
             $customer->asArray(),
             $order->asArray(),
+            $options->asArray(),
             ['authenticity_token' => $this->token, 'digest' => $digest]
         );
-
-        if ($options) {
-            $request = array_merge($request, $options->asArray());
-        }
-
-        return $this->client->transaction(TransactionType::PURCHASE, $request);
     }
 
-    public function capture(Order $order, ?Options $options = null): Response
+    private function buildXmlBody(Order $order): array
     {
-        return $this->client->transaction(TransactionType::CAPTURE);
-    }
+        $digest = $this->digest(
+            $this->key,
+            $order->getNumber()->value(),
+            $order->getAmount()->value(),
+            $order->getCurrency()->value()
+        );
 
-    public function refund(Order $order, ?Options $options = null): Response
-    {
-        return $this->client->transaction(TransactionType::REFUND);
-    }
-
-    public function void(Order $order, ?Options $options = null): Response
-    {
-        return $this->client->transaction(TransactionType::VOID);
+        return array_merge($order->asArray(), ['authenticity_token' => $this->token, 'digest' => $digest]);
     }
 
     public function getClient(): Client

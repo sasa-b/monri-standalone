@@ -109,6 +109,7 @@ final class Form implements Request, Arrayable
 
     public function setToken(string $token): void
     {
+        Assert::length($token, 40, 'Invalid token length. Expected 40 characters. Got: %s');
         $this->token = $token;
     }
 

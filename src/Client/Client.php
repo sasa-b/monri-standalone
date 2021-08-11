@@ -26,7 +26,13 @@ final class Client
     public const TEST_URL = 'https://ipgtest.monri.com';
     public const PROD_URL = 'https://ipg.monri.com';
 
-    private const PATH = '/v2/form';
+    private const PATH = [
+        TransactionType::AUTHORIZATION => '/v2/form',
+        TransactionType::PURCHASE      => '/v2/form',
+        TransactionType::CAPTURE       => '/transactions/:order_number/capture.xml',
+        TransactionType::REFUND        => '/transactions/:order_number/refund.xml',
+        TransactionType::VOID          => '/transactions/:order_number/void.xml'
+    ];
 
     private HttpClientInterface $client;
 
@@ -63,8 +69,12 @@ final class Client
             ];
         }
 
-        $response = $this->client->request('POST', self::PATH, [
-            'body'    => $request->getBody(),
+        $body = $request->getBody();
+
+        $path = str_replace(':order_number', $body['order_number'], self::PATH[$request->getType()]);
+
+        $response = $this->client->request('POST', $path, [
+            'body'    => $body,
             'headers' => $headers
         ])->toArray();
 
@@ -90,7 +100,9 @@ final class Client
             $request = Xml::fromArray(array_merge($payload, ['transaction_type' => $type]));
         }
 
-        $response = $this->client->request('POST', self::PATH, [
+        $path = str_replace(':order_number', $payload['order_number'], self::PATH[$type]);
+
+        $response = $this->client->request('POST', $path, [
             'body'    => $payload,
             'headers' => $headers
         ])->toArray();

@@ -42,18 +42,16 @@ $order = new Order(
 
 // Authorize transaction
 $monri->authorize($customer, $order);
-
 // Purchase
 $monri->purchase($customer, $order);
-
 // Capture
 $monri->capture($order);
-
 // Refund
 $monri->refund($order);
-
 // Void
 $monri->void($order);
 
-
+//
+// OR
+//
 $monri->request();
