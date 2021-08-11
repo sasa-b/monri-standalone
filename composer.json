@@ -1,0 +1,29 @@
+{
+  "name": "sasa-b/monri-standalone",
+  "description": "Monri Payment Gateway HTTP Client",
+  "minimum-stability": "stable",
+  "license": "Apache-2.0",
+  "keywords": ["sdk", "payment-gateway", "monri", "http", "php"],
+  "authors": [
+    {
+      "name": "sasablagojevic",
+      "email": "email@example.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "SasaB\\Monri\\": "src/",
+      "SasaB\\Monri\\Test\\": "/tests"
+    }
+  },
+  "require": {
+    "php": "^7.4 | >=8.0",
+    "symfony/http-client": "^5.3",
+    "webmozart/assert": "^1.10",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "friendsofphp/php-cs-fixer": "^3.0"
+  }
+}
