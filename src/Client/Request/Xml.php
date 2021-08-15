@@ -12,6 +12,7 @@ use SasaB\Monri\Arrayable;
 use SasaB\Monri\CanDigest;
 use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
+use SasaB\Monri\Client\TransactionType;
 use SasaB\Monri\Model\Order;
 use Webmozart\Assert\Assert;
 
@@ -48,7 +49,14 @@ abstract class Xml implements Request, Arrayable
 
     public static function fromArray(array $data): Xml
     {
-        return new static(Order::fromArray($data));
+        if ($data['transaction_type'] === TransactionType::REFUND) {
+            $request = new Refund(Order::fromArray($data));
+        } elseif ($data['transaction_type'] === TransactionType::VOID) {
+            $request = new VoidTransaction(Order::fromArray($data));
+        } else {
+            $request = new Capture(Order::fromArray($data));
+        }
+        return $request;
     }
 
     public function asArray(): array

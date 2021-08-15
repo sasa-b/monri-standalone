@@ -21,7 +21,6 @@ trait CanValidateXml
             'order_number',
             'amount',
             'currency',
-            'transaction_type',
             'authenticity_token',
             'digest'
         ] as $field) {
@@ -29,11 +28,5 @@ trait CanValidateXml
                 throw new MissingRequiredFieldException("Missing $field is required");
             }
         }
-
-        Assert::inArray($payload['transaction_type'], [
-            TransactionType::CAPTURE,
-            TransactionType::REFUND,
-            TransactionType::VOID
-        ], 'Invalid transaction_type value. Expected capture, refund or void. Got: %s');
     }
 }

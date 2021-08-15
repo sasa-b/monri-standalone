@@ -6,7 +6,7 @@
  * Time: 09:59
  */
 
-namespace SasaB\Monri\Client\Response;
+namespace SasaB\Monri\Client;
 
 
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;

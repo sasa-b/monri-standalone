@@ -15,6 +15,7 @@ use SasaB\Monri\CanDigest;
 use SasaB\Monri\Client\Exception\MissingRequiredFieldException;
 use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
+use SasaB\Monri\Client\TransactionType;
 use SasaB\Monri\Model\Customer;
 use SasaB\Monri\Model\Order;
 use SasaB\Monri\Options;
@@ -44,7 +45,14 @@ abstract class Form implements Request, Arrayable
 
     public static function fromArray(array $data): Form
     {
-        return new static(
+        if ($data['transaction_type'] === TransactionType::PURCHASE) {
+            return new Purchase(
+                Customer::fromArray($data),
+                Order::fromArray($data),
+                Options::fromArray($data)
+            );
+        }
+        return new Authorize(
             Customer::fromArray($data),
             Order::fromArray($data),
             Options::fromArray($data)

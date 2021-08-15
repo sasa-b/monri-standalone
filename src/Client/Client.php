@@ -11,22 +11,16 @@ declare(strict_types=1);
 namespace SasaB\Monri\Client;
 
 use SasaB\Monri\Client\Request\Authorize;
-use SasaB\Monri\Client\Request\Capture;
 use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
 use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
 use SasaB\Monri\Client\Request\Form;
 use SasaB\Monri\Client\Request\Purchase;
-use SasaB\Monri\Client\Request\Refund;
-use SasaB\Monri\Client\Request\VoidTransaction;
-use SasaB\Monri\Client\Request\Xml;
-use SasaB\Monri\Client\Response\Deserializer;
-use Symfony\Component\HttpClient\Exception\RedirectionException;
+use SasaB\Monri\Client\Request\Xml as XmlRequest;
+use SasaB\Monri\Client\Response\Html;
+use SasaB\Monri\Client\Response\Xml;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Component\HttpClient\Response\CurlResponse;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
@@ -37,7 +31,7 @@ final class Client
 
     public const TEST_URL = 'https://ipgtest.monri.com';
     public const PROD_URL = 'https://ipg.monri.com';
-    private const LOCAL_URL = 'http://localhost:80';
+    private const LOCAL_URL = 'http://localhost:8005';
 
     private const PATH = [
         TransactionType::AUTHORIZATION => '/v2/form',
@@ -48,18 +42,17 @@ final class Client
     ];
 
     private HttpClientInterface $client;
-    private Deserializer $deserializer;
+    private Serializer $deserializer;
 
-    public function __construct(HttpClientInterface $client, Deserializer $deserializer)
+    public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
-        $this->deserializer = $deserializer;
     }
 
     public static function new(string $url = self::TEST_URL): self
     {
         Assert::inArray($url, [self::TEST_URL, self::PROD_URL, self::LOCAL_URL], 'Invalid url. Expected '.self::TEST_URL.' or '.self::PROD_URL.'. Got: %s');
-        return new self(HttpClient::createForBaseUri($url), new Deserializer());
+        return new self(HttpClient::createForBaseUri($url));
     }
 
     public static function dev(): self
@@ -77,7 +70,11 @@ final class Client
         return self::new(self::LOCAL_URL);
     }
 
-    public function request(Request $request): ?Response
+    /**
+     * @throws HttpExceptionInterface
+     * @return CurlResponse|Response
+     */
+    public function request(Request $request)
     {
         if (in_array(get_class($request), [Authorize::class, Purchase::class], true)) {
             $headers = [
@@ -89,57 +86,47 @@ final class Client
             ];
         }
 
+        $type= $request->getType();
         $body = $request->getBody();
 
-        $path = str_replace(':order_number', $body['order_number'], self::PATH[$request->getType()]);
+        $path = str_replace(':order_number', $body['order_number'], self::PATH[$type]);
 
-        try {
-            if (in_array(get_class($request), [Capture::class, Refund::class, VoidTransaction::class])) {
-                $response = $this->client->request('POST', $path, [
-                    'body'    => $body,
-                    'headers' => $headers
-                ]);
-            } else {
-            }
-        } catch (RedirectionException $e) {
-        } catch (HttpExceptionInterface $e) {
-        }
-
-
-        $response = Response::fromArray($response);
-        $response->setRequest($request);
-        return $response;
+        return $this->sendRequest($request->getType(), $path, $body, $headers, $request);
     }
 
     /**
      * @throws HttpExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
      */
-    public function transaction(string $type, array $payload): ?Response
+    public function transaction(string $type, array $payload): Response
     {
         if (in_array($type, [TransactionType::AUTHORIZATION, TransactionType::PURCHASE], true)) {
             $headers = [
                 'content-type' => 'application/x-www-form-urlencoded'
             ];
-            $this->validateFormRequest($payload);
             $payload['transaction_type'] = $type;
+            $this->validateFormRequest($payload);
             $request = Form::fromArray($payload);
         } else {
             $headers = [
                 'content-type' => 'application/xml'
             ];
             $this->validateXmlRequest($payload);
-            $request = Xml::fromArray(array_merge($payload, ['transaction_type' => $type]));
+            $request = XmlRequest::fromArray(array_merge($payload, ['transaction_type' => $type]));
         }
 
         $path = str_replace(':order_number', $payload['order_number'], self::PATH[$type]);
 
+        return $this->sendRequest($type, $path, $payload, $headers, $request);
+    }
+
+    /**
+     * @throws HttpExceptionInterface
+     */
+    private function sendRequest(string $type, string $path, array $payload, array $headers, Request $request): Response
+    {
         try {
             $response = $this->client->request('POST', $path, [
-                'body' => $payload,
+                'body'    => $payload,
                 'headers' => $headers
             ]);
 
@@ -148,10 +135,11 @@ final class Client
                 TransactionType::REFUND,
                 TransactionType::VOID
             ], true)) {
-                $response = $this->deserializer->deserializeXml($response->getContent());
+                $response = Xml::fromString($response->getContent());
             } else {
+                $response = Html::fromCurl($response);
             }
-        } catch (RedirectionException $e) {
+            $response->setRequest($request);
         } catch (HttpExceptionInterface $e) {
             $response = $e->getResponse();
             if ($response->getStatusCode() === 406) {
@@ -160,7 +148,6 @@ final class Client
                 throw $e;
             }
         }
-        $response->setRequest($request);
         return $response;
     }
 }

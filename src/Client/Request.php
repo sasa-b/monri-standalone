@@ -13,4 +13,12 @@ interface Request
     public function getBody(): array;
 
     public function getType(): string;
+
+    public function setToken(string $token): void;
+
+    public function getToken(): string;
+
+    public function setKey(string $key): void;
+
+    public function getKey(): string;
 }

@@ -9,7 +9,18 @@
 namespace SasaB\Monri\Client\Response;
 
 
-final class Json
-{
+use SasaB\Monri\Arrayable;
+use SasaB\Monri\AttributeBag;
 
+final class Json extends AttributeBag implements Arrayable
+{
+    public function asArray(): array
+    {
+        return $this->attributes;
+    }
+
+    public static function fromArray(array $data): Arrayable
+    {
+        return new self($data);
+    }
 }

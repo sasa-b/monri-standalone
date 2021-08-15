@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace SasaB\Monri\Client\Response;
 
+use SasaB\Monri\Client\Serializer;
 use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Request\Xml as XmlRequest;
 use SasaB\Monri\Client\Response;
 
 /**
@@ -52,6 +52,33 @@ final class Xml implements Response
     private \DateTimeImmutable $createdAt;
 
     private ?Request $request = null;
+
+    private Serializer $serializer;
+
+    private function __construct(Serializer $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    public static function new(): Xml
+    {
+        return new self(new Serializer());
+    }
+
+    public static function fromString(string $xml): Xml
+    {
+        return self::new()->deserialize($xml);
+    }
+
+    public function serialize(): string
+    {
+        return $this->serializer->serializeXml($this, ['xml_root_node_name' => 'transaction']);
+    }
+
+    public function deserialize(string $data): self
+    {
+        return $this->serializer->deserializeXml($data, ['xml_root_node_name' => 'transaction']);
+    }
 
     public function getBody(): array
     {
@@ -215,7 +242,7 @@ final class Xml implements Response
         }
     }
 
-    public function getRequest(): ?XmlRequest
+    public function getRequest(): Request
     {
         return $this->request;
     }

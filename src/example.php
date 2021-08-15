@@ -35,8 +35,6 @@ $customer = new Customer(
     new Address('Dunder Mifflin 1', 'Scranton', '18503', 'USA')
 );
 
-bin2hex(random_bytes(40));
-
 $order = new Order(
     new OrderInfo('Paper clips'),
     new OrderNumber('0000001'),

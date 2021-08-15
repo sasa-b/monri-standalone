@@ -9,14 +9,14 @@
 namespace SasaB\Monri\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use SasaB\Monri\Client\Response\Deserializer;
+use SasaB\Monri\Client\Serializer;
 use SasaB\Monri\Client\Response\Xml;
 
 class ResponseTest extends TestCase
 {
     public function test_it_can_be_deserialized_from_xml()
     {
-        $deserializer = new Deserializer();
+        $deserializer = new Serializer();
 
         $id = 845;
         $acquirer = 'rogach bank';

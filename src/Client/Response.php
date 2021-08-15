@@ -10,9 +10,12 @@ namespace SasaB\Monri\Client;
 
 interface Response
 {
-    public function setRequest(Request $request);
+    public function setRequest(Request $request): void;
 
     public function getRequest(): Request;
 
-    public function getBody(): array;
+    /**
+     * @return array|string
+     */
+    public function getBody();
 }

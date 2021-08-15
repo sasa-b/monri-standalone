@@ -6,38 +6,44 @@
  * Time: 19:37
  */
 
-namespace SasaB\Monri\Client\Response;
+namespace SasaB\Monri\Client;
 
+use SasaB\Monri\Client\Response\Xml;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 use Webmozart\Assert\Assert;
 
-final class Deserializer
+final class Serializer
 {
-    private Serializer $serializer;
+    private SymfonySerializer $serializer;
 
     public function __construct()
     {
-        $this->serializer = new Serializer(
+        $this->serializer = new SymfonySerializer(
             [new ObjectNormalizer(null, new KebabCaseToCamelCaseConverter())],
             [new XmlEncoder(), new JsonEncoder()]
         );
     }
 
-    private function deserialize(string $data, string $class, string $format = 'xml')
+    private function deserialize(string $data, string $class, string $format, array $context)
     {
         Assert::classExists($class, 'Invalid class provided. %s does not exist');
         Assert::inArray($format, ['json', 'xml'], 'Invalid format provided. Expected xml or json. Got %s');
 
-        return $this->serializer->deserialize($data, $class, $format);
+        return $this->serializer->deserialize($data, $class, $format, $context);
     }
 
-    public function deserializeXml(string $data): Xml
+    public function deserializeXml(string $data, array $context = []): Xml
     {
         $data = preg_replace('/type="\w+"/', '', $data);
 
-        return $this->deserialize($data, Xml::class, 'xml');
+        return $this->deserialize($data, Xml::class, 'xml', $context);
+    }
+
+    public function serializeXml(Xml $xml, array $context = []): string
+    {
+        return $this->serializer->serialize($xml->getBody(), 'xml', $context);
     }
 }
