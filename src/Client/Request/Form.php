@@ -12,6 +12,7 @@ namespace SasaB\Monri\Client\Request;
 
 use SasaB\Monri\Arrayable;
 use SasaB\Monri\CanDigest;
+use SasaB\Monri\Client\Exception\MissingRequiredFieldException;
 use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
 use SasaB\Monri\Model\Customer;
@@ -31,7 +32,7 @@ abstract class Form implements Request, Arrayable
     protected string $key = '';
     protected float $timestamp;
 
-    private function __construct(Customer $customer, Order $order, Options $options)
+    protected function __construct(Customer $customer, Order $order, Options $options)
     {
         $this->customer = $customer;
         $this->order = $order;
@@ -40,16 +41,6 @@ abstract class Form implements Request, Arrayable
     }
 
     abstract public function getType(): string;
-
-    public static function authorize(Customer $customer, Order $order, Options $options = null): Authorize
-    {
-        return new Authorize($customer, $order, $options ?? Options::default());
-    }
-
-    public static function purchase(Customer $customer, Order $order, Options $options = null): Purchase
-    {
-        return new Purchase($customer, $order, $options ?? Options::default());
-    }
 
     public static function fromArray(array $data): Form
     {
@@ -62,6 +53,14 @@ abstract class Form implements Request, Arrayable
 
     public function asArray(): array
     {
+        if ($this->key === '') {
+            throw MissingRequiredFieldException::merchantKey($this);
+        }
+
+        if ($this->token === '') {
+            throw MissingRequiredFieldException::authenticityToken($this);
+        }
+
         $digest = $this->digest(
             $this->key,
             $this->order->getNumber()->value(),
@@ -75,7 +74,7 @@ abstract class Form implements Request, Arrayable
             $this->options->asArray(),
             [
                 'digest'             => $digest,
-                'transaction_type'   => $this->getType,
+                'transaction_type'   => $this->getType(),
                 'authenticity_token' => $this->token,
             ]
         );

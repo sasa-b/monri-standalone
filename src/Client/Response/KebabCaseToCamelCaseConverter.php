@@ -11,7 +11,7 @@ namespace SasaB\Monri\Client\Response;
 
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
-class KebabCaseToCamelCaseConverter implements NameConverterInterface
+final class KebabCaseToCamelCaseConverter implements NameConverterInterface
 {
     public function normalize(string $propertyName): string
     {

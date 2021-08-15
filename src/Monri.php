@@ -54,7 +54,9 @@ final class Monri
         $options ??= Options::default();
 
         Assert::notNull($token, 'Invalid token value. Expected alphanumeric value. Got: null');
+        Assert::alnum($token, 'Invalid token value. Expected alphanumeric value. Got: %s');
         Assert::notNull($key, 'Invalid key value. Expected alphanumeric value. Got: null');
+        Assert::alnum($key, 'Invalid key value. Expected alphanumeric value. Got: %s');
 
         return new self(Client::dev(), $options, $token, $key);
     }

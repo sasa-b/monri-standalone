@@ -8,8 +8,26 @@
 
 namespace SasaB\Monri\Client\Response;
 
+use SasaB\Monri\Client\Response;
 
-final class InvalidXml
+final class InvalidXml implements Response
 {
+    private string $error;
 
+    public function setError(string $error): void
+    {
+        $this->error = $error;
+    }
+
+    public function getError(): string
+    {
+        return $this->error;
+    }
+
+    public function getBody(): array
+    {
+        return [
+            'error' => $this->error
+        ];
+    }
 }

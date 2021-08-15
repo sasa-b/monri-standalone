@@ -17,7 +17,6 @@ final class OrderInfo extends StringObject
 {
     public function __construct(string $info)
     {
-        Assert::alnum($info, 'Invalid order_info value. Expected alphanumeric. Got: %s');
         Assert::lengthBetween($info, 3, 100, 'Invalid order_info length. Must be between 3-100 characters');
         parent::__construct($info);
     }

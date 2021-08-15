@@ -6,6 +6,7 @@
  * Time: 18:05
  */
 
+use SasaB\Monri\Client\Request\Authorize;
 use SasaB\Monri\Model\Customer;
 use SasaB\Monri\Model\Customer\Address;
 use SasaB\Monri\Model\Customer\Email;
@@ -19,26 +20,37 @@ use SasaB\Monri\Model\Order\OrderNumber;
 use SasaB\Monri\Monri;
 use SasaB\Monri\Options;
 
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 // Development
-$monri = Monri::testApi('{authenticity_token}', '{merchant_key}', Options::default());
+// $monri = Monri::testApi('{authenticity_token}', '{merchant_key}', Options::default());
+$monri = Monri::testApi($token = substr(bin2hex(random_bytes(40)), 0, 40), $key = 'xy1234', Options::default());
 // Production
 // $monri = Monri::api();
 
 $customer = new Customer(
     new FullName('Michael Scott'),
     new Email('michale.scott@gmail.com'),
-    new Phone('+1 23 456 789'),
-    new Address('Dunder Mifflin 1', 'Scranton', '18503', 'Pennsylvania')
+    new Phone('00387653245'),
+    new Address('Dunder Mifflin 1', 'Scranton', '18503', 'USA')
 );
+
+bin2hex(random_bytes(40));
 
 $order = new Order(
     new OrderInfo('Paper clips'),
     new OrderNumber('0000001'),
-    new Amount('1000'),
+    new Amount(1000),
     new Currency('USD')
 );
+
+$request = Authorize::for($customer, $order);
+$request->setToken($token);
+$request->setKey($key);
+
+echo http_build_query($request->getBody())."\n";
+
+die;
 
 // Authorize transaction
 $monri->authorize($customer, $order);

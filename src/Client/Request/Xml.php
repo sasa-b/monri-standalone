@@ -38,28 +38,13 @@ abstract class Xml implements Request, Arrayable
     protected string $key = '';
     protected float $timestamp;
 
-    private function __construct(Order $order)
+    protected function __construct(Order $order)
     {
         $this->order = $order;
         $this->timestamp = microtime(true);
     }
 
     abstract public function getType(): string;
-
-    public static function capture(Order $order): Capture
-    {
-        return new Capture($order);
-    }
-
-    public static function refund(Order $order): Refund
-    {
-        return new Refund($order);
-    }
-
-    public static function void(Order $order): VoidTransaction
-    {
-        return new VoidTransaction($order);
-    }
 
     public static function fromArray(array $data): Xml
     {

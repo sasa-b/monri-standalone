@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace SasaB\Monri\Client\Response;
 
+use SasaB\Monri\Client\Request;
+use SasaB\Monri\Client\Request\Xml as XmlRequest;
 use SasaB\Monri\Client\Response;
 
 /**
@@ -48,6 +50,8 @@ final class Xml implements Response
     private string $status;
     private string $transactionType;
     private \DateTimeImmutable $createdAt;
+
+    private ?Request $request = null;
 
     public function getBody(): array
     {
@@ -209,5 +213,15 @@ final class Xml implements Response
         } else {
             $this->createdAt = $createdAt;
         }
+    }
+
+    public function getRequest(): ?XmlRequest
+    {
+        return $this->request;
+    }
+
+    public function setRequest(Request $request): void
+    {
+        $this->request = $request;
     }
 }

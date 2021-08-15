@@ -82,10 +82,10 @@ final class Options extends AttributeBag implements Arrayable
         return $options;
     }
 
-    public static function default(): self
+    public static function default(array $with = []): self
     {
         $options = self::loadFromEnv();
-        $options->attributes = array_merge($options->attributes, [
+        $options->attributes = array_merge($options->attributes, $with, [
             'tokenize_pan_offered'      => true,
             'tokenize_brands'           => CardBrands::allAsString(),
             'supported_payment_methods' => 'card',

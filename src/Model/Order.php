@@ -62,10 +62,10 @@ final class Order implements Arrayable
     public function asArray(): array
     {
         return [
-            'order_info'   => $this->info,
-            'order_number' => $this->number,
-            'amount'       => $this->amount,
-            'currency'     => $this->currency
+            'order_info'   => $this->info->value(),
+            'order_number' => $this->number->value(),
+            'amount'       => $this->amount->value(),
+            'currency'     => $this->currency->value()
         ];
     }
 

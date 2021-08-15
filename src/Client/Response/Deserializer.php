@@ -31,7 +31,7 @@ final class Deserializer
         Assert::classExists($class, 'Invalid class provided. %s does not exist');
         Assert::inArray($format, ['json', 'xml'], 'Invalid format provided. Expected xml or json. Got %s');
 
-        return $this->serializer->deserialize($data, $class, $format, ['xml_root_node_name' => 'transaction']);
+        return $this->serializer->deserialize($data, $class, $format);
     }
 
     public function deserializeXml(string $data): Xml

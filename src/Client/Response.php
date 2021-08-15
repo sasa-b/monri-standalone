@@ -8,8 +8,11 @@
 
 namespace SasaB\Monri\Client;
 
-
 interface Response
 {
+    public function setRequest(Request $request);
+
+    public function getRequest(): Request;
+
     public function getBody(): array;
 }

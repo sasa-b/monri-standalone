@@ -17,7 +17,7 @@ final class Amount extends IntegerObject
 {
     public function __construct(int $amount)
     {
-        Assert::positiveInteger('Invalid amount value. Expected positive value. Got: %s');
+        Assert::positiveInteger($amount, 'Invalid amount value. Expected positive value. Got: %s');
         Assert::lengthBetween((string) $amount, 3, 11, 'Invalid amount value. Expected number with 3-11 digits. Got: %s');
         parent::__construct($amount);
     }

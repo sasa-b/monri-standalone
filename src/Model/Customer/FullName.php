@@ -16,7 +16,7 @@ final class FullName extends StringObject
 {
     public function __construct(string $fullName)
     {
-        Assert::alnum($fullName, 'Invalid full_name value. Expected alphanumeric. Got: %s');
+        array_map(fn ($name) => Assert::alnum($name, 'Invalid full_name value. Expected alphanumeric. Got: %s'), preg_split('/\s+/', $fullName));
         Assert::lengthBetween($fullName, 3, 30, 'Invalid full_name length. Must be between 3-30 characters');
         parent::__construct($fullName);
     }

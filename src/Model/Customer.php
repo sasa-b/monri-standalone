@@ -66,10 +66,9 @@ final class Customer implements Arrayable
     public function asArray(): array
     {
         return array_merge([
-            'ch_full_name' => $this->fullName,
-            'ch_email'     => $this->email,
-            'ch_phone'     => $this->phone,
-            'ch_address'   => $this->address,
+            'ch_full_name' => $this->fullName->value(),
+            'ch_email'     => $this->email->value(),
+            'ch_phone'     => $this->phone->value(),
         ], $this->address->asArray());
     }
 

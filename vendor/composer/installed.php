@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '504967fcd17d16d9d6359042b74fcc42c50f7e2c',
+        'reference' => '21ad6b130530bea78eb1f768541c97ea6d523282',
         'name' => 'sasa-b/monri-standalone',
         'dev' => true,
     ),
@@ -274,7 +274,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '504967fcd17d16d9d6359042b74fcc42c50f7e2c',
+            'reference' => '21ad6b130530bea78eb1f768541c97ea6d523282',
             'dev_requirement' => false,
         ),
         'sebastian/cli-parser' => array(

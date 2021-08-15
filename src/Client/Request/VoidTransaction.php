@@ -10,11 +10,17 @@ namespace SasaB\Monri\Client\Request;
 
 
 use SasaB\Monri\Client\TransactionType;
+use SasaB\Monri\Model\Order;
 
 final class VoidTransaction extends Xml
 {
     public function getType(): string
     {
         return TransactionType::VOID;
+    }
+
+    public static function for(Order $order): VoidTransaction
+    {
+        return new self($order);
     }
 }

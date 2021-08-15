@@ -14,8 +14,8 @@ final class CardBrands
     public const MASTER = 'master';
     public const MAESTRO = 'maestro';
     public const DINERS = 'diners';
-    public const JCB = 'JCB';
-    public const DISCOVER = 'DISCOVER';
+    public const JCB = 'jcb';
+    public const DISCOVER = 'discover';
 
     public static function all(): array
     {
