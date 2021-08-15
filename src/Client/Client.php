@@ -10,11 +10,15 @@ declare(strict_types=1);
 
 namespace SasaB\Monri\Client;
 
+use SasaB\Monri\Client\Request\Authorize;
 use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
 use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
 use SasaB\Monri\Client\Request\Form;
+use SasaB\Monri\Client\Request\Purchase;
 use SasaB\Monri\Client\Request\Xml;
+use SasaB\Monri\Client\Response\Deserializer;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
@@ -35,16 +39,18 @@ final class Client
     ];
 
     private HttpClientInterface $client;
+    private Deserializer $deserializer;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, Deserializer $deserializer)
     {
         $this->client = $client;
+        $this->deserializer = $deserializer;
     }
 
     public static function new(string $url = self::TEST_URL): self
     {
         Assert::inArray($url, [self::TEST_URL, self::PROD_URL], 'Invalid url. Expected '.self::TEST_URL.' or '.self::PROD_URL.'. Got: %s');
-        return new self(HttpClient::createForBaseUri($url));
+        return new self(HttpClient::createForBaseUri($url), new Deserializer());
     }
 
     public static function dev(): self
@@ -59,7 +65,7 @@ final class Client
 
     public function request(Request $request): Response
     {
-        if (in_array($request->getType(), [TransactionType::AUTHORIZATION, TransactionType::PURCHASE], true)) {
+        if (in_array(get_class($request), [Authorize::class, Purchase::class], true)) {
             $headers = [
                 'content-type' => 'application/x-www-form-urlencoded'
             ];
@@ -102,10 +108,25 @@ final class Client
 
         $path = str_replace(':order_number', $payload['order_number'], self::PATH[$type]);
 
-        $response = $this->client->request('POST', $path, [
-            'body'    => $payload,
-            'headers' => $headers
-        ])->toArray();
+        try {
+
+            $response = $this->client->request('POST', $path, [
+                'body'    => $payload,
+                'headers' => $headers
+            ]);
+
+            if (in_array($type, [
+                TransactionType::CAPTURE,
+                TransactionType::REFUND,
+                TransactionType::VOID
+            ], true)) {
+                return $this->deserializer->deserializeXml($response->getContent());
+            }
+
+        } catch (HttpExceptionInterface $e) {
+            $response = $e->getResponse()->getContent(false);
+        }
+
 
         $response = Response::fromArray($response);
         $response->setRequest($request);

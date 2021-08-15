@@ -12,7 +12,6 @@ use SasaB\Monri\Arrayable;
 use SasaB\Monri\CanDigest;
 use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
-use SasaB\Monri\Client\TransactionType;
 use SasaB\Monri\Model\Order;
 use Webmozart\Assert\Assert;
 
@@ -29,48 +28,42 @@ use Webmozart\Assert\Assert;
  *   <order-number>11qqaazz</order-number>
  * </transaction>
  */
-final class Xml implements Request, Arrayable
+abstract class Xml implements Request, Arrayable
 {
     use CanValidateXml;
     use CanDigest;
 
-    private Order $order;
-    private string $type;
-    private string $token = '';
-    private string $key = '';
-    private float $timestamp;
+    protected Order $order;
+    protected string $token = '';
+    protected string $key = '';
+    protected float $timestamp;
 
-    private function __construct(Order $order, string $type)
+    private function __construct(Order $order)
     {
         $this->order = $order;
-        $this->type = $type;
         $this->timestamp = microtime(true);
     }
 
-    public static function capture(Order $order): self
+    abstract public function getType(): string;
+
+    public static function capture(Order $order): Capture
     {
-        return new self($order, TransactionType::CAPTURE);
+        return new Capture($order);
     }
 
-    public static function refund(Order $order): self
+    public static function refund(Order $order): Refund
     {
-        return new self($order, TransactionType::REFUND);
+        return new Refund($order);
     }
 
-    public static function void(Order $order): self
+    public static function void(Order $order): VoidTransaction
     {
-        return new self($order, TransactionType::VOID);
+        return new VoidTransaction($order);
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): Xml
     {
-        Assert::inArray($data['transaction_type'] ?? 'none', [
-            TransactionType::CAPTURE,
-            TransactionType::REFUND,
-            TransactionType::VOID
-        ], 'Invalid transaction_type value. Expected capture, refund or void. Got: %s');
-
-        return new self(Order::fromArray($data), $data['transaction_type']);
+        return new static(Order::fromArray($data));
     }
 
     public function asArray(): array
@@ -94,11 +87,6 @@ final class Xml implements Request, Arrayable
         $this->validateXmlRequest($body);
 
         return $body;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     public function getTimestamp(): float

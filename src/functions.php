@@ -13,7 +13,7 @@ namespace SasaB\Monri {
     if (!function_exists('env')) {
         function env(string $key, $default = null)
         {
-            $value = trim((string) getenv($key));
+            $value = trim((string)getenv($key));
 
             switch ($value) {
                 case 'true':
@@ -22,7 +22,7 @@ namespace SasaB\Monri {
                     return false;
                 case '1':
                 case '0':
-                    return (int) $value;
+                    return (int)$value;
                 case 'null':
                     return $default;
             }

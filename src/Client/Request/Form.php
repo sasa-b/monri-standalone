@@ -14,56 +14,49 @@ use SasaB\Monri\Arrayable;
 use SasaB\Monri\CanDigest;
 use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
-use SasaB\Monri\Client\TransactionType;
 use SasaB\Monri\Model\Customer;
 use SasaB\Monri\Model\Order;
 use SasaB\Monri\Options;
 use Webmozart\Assert\Assert;
 
-final class Form implements Request, Arrayable
+abstract class Form implements Request, Arrayable
 {
     use CanValidateForm;
     use CanDigest;
 
-    private Customer $customer;
-    private Order $order;
-    private Options $options;
-    private string $type;
-    private string $token = '';
-    private string $key = '';
-    private float $timestamp;
+    protected Customer $customer;
+    protected Order $order;
+    protected Options $options;
+    protected string $token = '';
+    protected string $key = '';
+    protected float $timestamp;
 
-    private function __construct(Customer $customer, Order $order, Options $options, string $type)
+    private function __construct(Customer $customer, Order $order, Options $options)
     {
         $this->customer = $customer;
         $this->order = $order;
         $this->options = $options;
-        $this->type = $type;
         $this->timestamp = microtime(true);
     }
 
-    public static function authorize(Customer $customer, Order $order, Options $options = null): self
+    abstract public function getType(): string;
+
+    public static function authorize(Customer $customer, Order $order, Options $options = null): Authorize
     {
-        return new self($customer, $order, $options ?? Options::default(), TransactionType::AUTHORIZATION);
+        return new Authorize($customer, $order, $options ?? Options::default());
     }
 
-    public static function purchase(Customer $customer, Order $order, Options $options = null): self
+    public static function purchase(Customer $customer, Order $order, Options $options = null): Purchase
     {
-        return new self($customer, $order, $options ?? Options::default(), TransactionType::PURCHASE);
+        return new Purchase($customer, $order, $options ?? Options::default());
     }
 
-    public static function fromArray(array $data): Arrayable
+    public static function fromArray(array $data): Form
     {
-        Assert::inArray($data['transaction_type'] ?? 'none', [
-            TransactionType::AUTHORIZATION,
-            TransactionType::PURCHASE,
-        ], 'Invalid transaction_type value. Expected authorization or purchase. Got: %s');
-
-        return new self(
+        return new static(
             Customer::fromArray($data),
             Order::fromArray($data),
-            Options::fromArray($data),
-            $data['transaction_type']
+            Options::fromArray($data)
         );
     }
 
@@ -82,7 +75,7 @@ final class Form implements Request, Arrayable
             $this->options->asArray(),
             [
                 'digest'             => $digest,
-                'transaction_type'   => $this->type,
+                'transaction_type'   => $this->getType,
                 'authenticity_token' => $this->token,
             ]
         );
@@ -95,11 +88,6 @@ final class Form implements Request, Arrayable
         $this->validateFormRequest($body);
 
         return $body;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     public function getToken(): string
