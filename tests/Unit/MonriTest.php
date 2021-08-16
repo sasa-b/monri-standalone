@@ -2,19 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: sasa.blagojevic@mail.com
- * Date: 16. 8. 2021.
- * Time: 09:22
+ * Date: 12. 8. 2021.
+ * Time: 00:46
  */
 
 namespace SasaB\Monri\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use SasaB\Monri\Client\Client;
-use SasaB\Monri\Client\Request\Authorize;
-use SasaB\Monri\Client\Request\Capture;
-use SasaB\Monri\Client\Request\Purchase;
-use SasaB\Monri\Client\Request\Refund;
-use SasaB\Monri\Client\Request\VoidTransaction;
 use SasaB\Monri\Client\Response\Xml;
 use SasaB\Monri\Model\Customer;
 use SasaB\Monri\Model\Customer\Address;
@@ -30,9 +25,10 @@ use SasaB\Monri\Monri;
 use SasaB\Monri\Tests\MockXmlResponse;
 use Symfony\Component\Process\Process;
 
-class ClientTest extends TestCase
+class MonriTest extends TestCase
 {
     private Client $client;
+    private Monri $monri;
     private string $token;
     private string $key;
 
@@ -46,6 +42,8 @@ class ClientTest extends TestCase
         $this->key = 'xyz1234';
 
         $this->client = Client::test();
+        $this->monri = Monri::testApi($this->token, $this->key);
+        $this->monri->setClient($this->client);
     }
 
     public static function setUpBeforeClass(): void
@@ -62,7 +60,7 @@ class ClientTest extends TestCase
         self::$serverProcess->stop();
     }
 
-    public function test_it_can_send_authorize_request(): void
+    public function test_it_can_authorize(): void
     {
         $customer = new Customer(
             new FullName('Michael Scott'),
@@ -78,11 +76,11 @@ class ClientTest extends TestCase
             new Currency('USD')
         );
 
-        $request = Authorize::for($customer, $order);
-        $request->setToken($this->token);
-        $request->setKey($this->key);
+        $response = $this->monri->authorize($customer, $order);
 
-        $response =  $this->client->request($request);
+        $request = $response->getRequest();
+        $request->setKey($this->key);
+        $request->setToken($this->token);
 
         $monriRedirectForm = <<<HTML
             <!DOCTYPE html>
@@ -104,7 +102,7 @@ class ClientTest extends TestCase
         $this->assertEquals($response->getBody(), $monriRedirectForm);
     }
 
-    public function test_it_can_send_purchase_request(): void
+    public function test_it_can_purchase(): void
     {
         $customer = new Customer(
             new FullName('Michael Scott'),
@@ -120,11 +118,11 @@ class ClientTest extends TestCase
             new Currency('USD')
         );
 
-        $request = Purchase::for($customer, $order);
-        $request->setToken($this->token);
-        $request->setKey($this->key);
+        $response = $this->monri->purchase($customer, $order);
 
-        $response =  $this->client->request($request);
+        $request = $response->getRequest();
+        $request->setKey($this->key);
+        $request->setToken($this->token);
 
         $monriRedirectForm = <<<HTML
             <!DOCTYPE html>
@@ -146,7 +144,7 @@ class ClientTest extends TestCase
         $this->assertEquals($response->getBody(), $monriRedirectForm);
     }
 
-    public function test_it_can_send_capture_request(): void
+    public function test_it_can_capture(): void
     {
         $order = new Order(
             new OrderInfo('Paper clips'),
@@ -155,11 +153,7 @@ class ClientTest extends TestCase
             new Currency('USD')
         );
 
-        $request = Capture::for($order);
-        $request->setToken($this->token);
-        $request->setKey($this->key);
-
-        $response = $this->client->request($request);
+        $response = $this->monri->capture($order);
 
         $expected = Xml::fromString(MockXmlResponse::capture());
         $expected->setRequest($response->getRequest());
@@ -167,7 +161,7 @@ class ClientTest extends TestCase
         $this->assertEquals($expected, $response);
     }
 
-    public function test_it_can_send_refund_request(): void
+    public function test_it_can_refund(): void
     {
         $order = new Order(
             new OrderInfo('Paper clips'),
@@ -176,11 +170,7 @@ class ClientTest extends TestCase
             new Currency('USD')
         );
 
-        $request = Refund::for($order);
-        $request->setToken($this->token);
-        $request->setKey($this->key);
-
-        $response = $this->client->request($request);
+        $response = $this->monri->refund($order);
 
         $expected = Xml::fromString(MockXmlResponse::refund());
         $expected->setRequest($response->getRequest());
@@ -188,7 +178,7 @@ class ClientTest extends TestCase
         $this->assertEquals($expected, $response);
     }
 
-    public function test_it_can_send_void_request(): void
+    public function test_it_can_void_transaction(): void
     {
         $order = new Order(
             new OrderInfo('Paper clips'),
@@ -197,11 +187,7 @@ class ClientTest extends TestCase
             new Currency('USD')
         );
 
-        $request = VoidTransaction::for($order);
-        $request->setToken($this->token);
-        $request->setKey($this->key);
-
-        $response = $this->client->request($request);
+        $response = $this->monri->void($order);
 
         $expected = Xml::fromString(MockXmlResponse::void());
         $expected->setRequest($response->getRequest());

@@ -69,7 +69,7 @@ abstract class Xml implements Request, Arrayable
         );
 
         return [
-            'transaction' => array_merge($this->order->asArray(), ['digest' => $digest])
+            'transaction' => array_merge($this->order->asArray(), ['authenticity_token' => $this->token, 'digest' => $digest])
         ];
     }
 
@@ -77,7 +77,7 @@ abstract class Xml implements Request, Arrayable
     {
         $body = $this->asArray();
 
-        $this->validateXmlRequest($body);
+        $this->validateXmlRequest($body['transaction']);
 
         return $body;
     }

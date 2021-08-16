@@ -76,6 +76,11 @@ final class Client
      */
     public function request(Request $request)
     {
+        $type= $request->getType();
+        $body = $request->getBody();
+
+        $path = self::PATH[$type];
+
         if (in_array(get_class($request), [Authorize::class, Purchase::class], true)) {
             $headers = [
                 'content-type' => 'application/x-www-form-urlencoded'
@@ -84,12 +89,8 @@ final class Client
             $headers = [
                 'content-type' => 'application/xml'
             ];
+            $path = str_replace(':order_number', $body['transaction']['order_number'], $path);
         }
-
-        $type= $request->getType();
-        $body = $request->getBody();
-
-        $path = str_replace(':order_number', $body['order_number'], self::PATH[$type]);
 
         return $this->sendRequest($request->getType(), $path, $body, $headers, $request);
     }
@@ -106,6 +107,7 @@ final class Client
             $payload['transaction_type'] = $type;
             $this->validateFormRequest($payload);
             $request = Form::fromArray($payload);
+            $request->setToken($payload['authenticity_token']);
         } else {
             $headers = [
                 'content-type' => 'application/xml'

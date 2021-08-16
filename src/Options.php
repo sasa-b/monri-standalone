@@ -67,12 +67,18 @@ final class Options extends AttributeBag implements Arrayable
 
     public static function fromArray(array $data): self
     {
-        return new self(array_merge(self::DEFAULT, $data));
+        return new self(
+            array_merge(
+                self::DEFAULT,
+                array_filter($data, static fn ($v, $k) => array_key_exists($k, self::DEFAULT), ARRAY_FILTER_USE_BOTH)
+            )
+        );
     }
 
     public static function loadFromEnv(): self
     {
         $options = new self();
+        $options->attributes = self::DEFAULT;
         $options->attributes = array_merge($options->attributes, [
             'language'              => env('MONRI_LANG', Language::BA),
             'success_url_override'  => env('MONRI_SUCCESS_URL'),
