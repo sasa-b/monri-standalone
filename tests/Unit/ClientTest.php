@@ -26,7 +26,6 @@ use SasaB\Monri\Model\Order\Amount;
 use SasaB\Monri\Model\Order\Currency;
 use SasaB\Monri\Model\Order\OrderInfo;
 use SasaB\Monri\Model\Order\OrderNumber;
-use SasaB\Monri\Monri;
 use SasaB\Monri\Tests\MockXmlResponse;
 use Symfony\Component\Process\Process;
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace SasaB\Monri;
 
 use SasaB\Monri\Client\Client;
+use SasaB\Monri\Client\Request;
 use SasaB\Monri\Client\Response;
 use SasaB\Monri\Client\TransactionType;
 
@@ -61,20 +62,19 @@ final class Monri
         return new self(Client::dev(), $options, $token, $key);
     }
 
+    public function transaction(Request $request): Response
+    {
+        return $this->client->request($request);
+    }
+
     public function authorize(Customer $customer, Order $order, ?Options $options = null): Response
     {
-        return $this->client->transaction(
-            TransactionType::AUTHORIZATION,
-            $this->buildFormBody($customer, $order, $options ?? Options::default())
-        );
+        return $this->client->transaction(TransactionType::AUTHORIZATION, $this->buildFormBody($customer, $order, $options ?? Options::default()));
     }
 
     public function purchase(Customer $customer, Order $order, ?Options $options = null): Response
     {
-        return $this->client->transaction(
-            TransactionType::PURCHASE,
-            $this->buildFormBody($customer, $order, $options ?? Options::default())
-        );
+        return $this->client->transaction(TransactionType::PURCHASE, $this->buildFormBody($customer, $order, $options ?? Options::default()));
     }
 
     public function capture(Order $order): Response
