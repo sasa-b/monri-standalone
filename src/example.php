@@ -7,6 +7,10 @@
  */
 
 use SasaB\Monri\Client\Request\Authorize;
+use SasaB\Monri\Client\Request\Capture;
+use SasaB\Monri\Client\Request\Purchase;
+use SasaB\Monri\Client\Request\Refund;
+use SasaB\Monri\Client\Request\VoidTransaction;
 use SasaB\Monri\Model\Customer;
 use SasaB\Monri\Model\Customer\Address;
 use SasaB\Monri\Model\Customer\Email;
@@ -23,10 +27,9 @@ use SasaB\Monri\Options;
 require_once '../vendor/autoload.php';
 
 // Development
-// $monri = Monri::testApi('{authenticity_token}', '{merchant_key}', Options::default());
-$monri = Monri::testApi($token = substr(bin2hex(random_bytes(40)), 0, 40), $key = 'xy1234', Options::default());
+$monri = Monri::testApi('{authenticity_token}', '{merchant_key}', Options::default());
 // Production
-// $monri = Monri::api();
+$monri = Monri::api('{authenticity_token}', '{merchant_key}', Options::default());
 
 $customer = new Customer(
     new FullName('Michael Scott'),
@@ -42,13 +45,9 @@ $order = new Order(
     new Currency('USD')
 );
 
-$request = Authorize::for($customer, $order);
-$request->setToken($token);
-$request->setKey($key);
-
-echo http_build_query($request->getBody())."\n";
-
-die;
+//
+// API 1
+//
 
 // Authorize transaction
 $monri->authorize($customer, $order);
@@ -62,6 +61,18 @@ $monri->refund($order);
 $monri->void($order);
 
 //
-// OR
+// API 2
 //
-$monri->request();
+
+// Authorize transaction
+$request = Authorize::for($customer, $order, Options::default());
+// Purchase
+$request = Purchase::for($customer, $order, Options::default());
+// Capture
+$request = Capture::for($order);
+// Refund
+$request = Refund::for($order);
+// Void
+$request = VoidTransaction::for($order);
+
+$monri->transaction($request);

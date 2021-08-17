@@ -64,6 +64,14 @@ final class Monri
 
     public function transaction(Request $request): Response
     {
+        if ($request->getKey() === '') {
+            $request->setKey($this->key);
+        }
+
+        if ($request->getToken() === '') {
+            $request->setToken($this->token);
+        }
+
         return $this->client->request($request);
     }
 

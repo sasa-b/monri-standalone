@@ -49,9 +49,13 @@ class MonriTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$serverProcess = Process::fromShellCommandline('php -S localhost:8005 ../server.php');
+        $tests = dirname(__DIR__);
+        self::$serverProcess = Process::fromShellCommandline("php -S localhost:8005 $tests/server.php");
         self::$serverProcess->start();
         sleep(1);
+        if (!self::$serverProcess->isRunning()) {
+            throw new \Exception(self::$serverProcess->getErrorOutput());
+        }
     }
 
     public static function tearDownAfterClass(): void
