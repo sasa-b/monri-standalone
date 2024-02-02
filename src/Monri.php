@@ -23,18 +23,12 @@ final class Monri
 {
     use CanDigest;
 
-    private Client $client;
-    private Options $options;
-    private string $token;
-    private string $key;
-
-    public function __construct(Client $client, Options $options, string $token, string $key)
-    {
-        $this->client = $client;
-        $this->options = $options;
-        $this->setToken($token);
-        $this->key = $key;
-    }
+    public function __construct(
+        private Client $client,
+        private Options $options,
+        private string $token,
+        private string $key,
+    ) {}
 
     public static function api(string $token = null, string $key = null, Options $options = null): self
     {
