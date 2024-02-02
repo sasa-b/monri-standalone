@@ -4,6 +4,7 @@
   "minimum-stability": "stable",
   "license": "Apache-2.0",
   "keywords": ["sdk", "payment-gateway", "monri", "http", "php"],
+  "version": "0.1.0",
   "authors": [
     {
       "name": "sasablagojevic",
