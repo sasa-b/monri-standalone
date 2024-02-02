@@ -6,8 +6,7 @@
  * Time: 09:59
  */
 
-namespace SasaB\Monri\Client;
-
+namespace Sco\Monri\Client;
 
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
@@ -15,7 +14,7 @@ final class KebabCaseToCamelCaseConverter implements NameConverterInterface
 {
     public function normalize(string $propertyName): string
     {
-        return strtolower(preg_replace('/([A-Z])/', '-$1', $propertyName));
+        return strtolower((string) preg_replace('/([A-Z])/', '-$1', $propertyName));
     }
 
     public function denormalize(string $propertyName): string

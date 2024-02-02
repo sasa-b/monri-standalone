@@ -6,10 +6,10 @@
  * Time: 19:13
  */
 
-namespace SasaB\Monri\Client\Request;
+namespace Sco\Monri\Client\Request;
 
-use SasaB\Monri\Client\TransactionType;
-use SasaB\Monri\Model\Order;
+use Sco\Monri\Client\TransactionType;
+use Sco\Monri\Model\Order;
 
 final class Capture extends Xml
 {

@@ -6,23 +6,23 @@
  * Time: 00:46
  */
 
-namespace SasaB\Monri\Tests\Unit;
+namespace Sco\Monri\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use SasaB\Monri\Client\Client;
-use SasaB\Monri\Client\Response\Xml;
-use SasaB\Monri\Model\Customer;
-use SasaB\Monri\Model\Customer\Address;
-use SasaB\Monri\Model\Customer\Email;
-use SasaB\Monri\Model\Customer\FullName;
-use SasaB\Monri\Model\Customer\Phone;
-use SasaB\Monri\Model\Order;
-use SasaB\Monri\Model\Order\Amount;
-use SasaB\Monri\Model\Order\Currency;
-use SasaB\Monri\Model\Order\OrderInfo;
-use SasaB\Monri\Model\Order\OrderNumber;
-use SasaB\Monri\Monri;
-use SasaB\Monri\Tests\MockXmlResponse;
+use Sco\Monri\Client\Client;
+use Sco\Monri\Client\Response\Xml;
+use Sco\Monri\Model\Customer;
+use Sco\Monri\Model\Customer\Address;
+use Sco\Monri\Model\Customer\Email;
+use Sco\Monri\Model\Customer\FullName;
+use Sco\Monri\Model\Customer\Phone;
+use Sco\Monri\Model\Order;
+use Sco\Monri\Model\Order\Amount;
+use Sco\Monri\Model\Order\Currency;
+use Sco\Monri\Model\Order\OrderInfo;
+use Sco\Monri\Model\Order\OrderNumber;
+use Sco\Monri\Monri;
+use Sco\Monri\Tests\MockXmlResponse;
 use Symfony\Component\Process\Process;
 
 class MonriTest extends TestCase
@@ -83,6 +83,7 @@ class MonriTest extends TestCase
         $response = $this->monri->authorize($customer, $order);
 
         $request = $response->getRequest();
+        $this->assertNotNull($request);
         $request->setKey($this->key);
         $request->setToken($this->token);
 
@@ -125,6 +126,7 @@ class MonriTest extends TestCase
         $response = $this->monri->purchase($customer, $order);
 
         $request = $response->getRequest();
+        $this->assertNotNull($request);
         $request->setKey($this->key);
         $request->setToken($this->token);
 
@@ -160,7 +162,9 @@ class MonriTest extends TestCase
         $response = $this->monri->capture($order);
 
         $expected = Xml::fromString(MockXmlResponse::capture());
-        $expected->setRequest($response->getRequest());
+        $request = $response->getRequest();
+        $this->assertNotNull($request);
+        $expected->forRequest($request);
 
         $this->assertEquals($expected, $response);
     }
@@ -177,7 +181,9 @@ class MonriTest extends TestCase
         $response = $this->monri->refund($order);
 
         $expected = Xml::fromString(MockXmlResponse::refund());
-        $expected->setRequest($response->getRequest());
+        $request = $response->getRequest();
+        $this->assertNotNull($request);
+        $expected->forRequest($request);
 
         $this->assertEquals($expected, $response);
     }
@@ -194,7 +200,9 @@ class MonriTest extends TestCase
         $response = $this->monri->void($order);
 
         $expected = Xml::fromString(MockXmlResponse::void());
-        $expected->setRequest($response->getRequest());
+        $request = $response->getRequest();
+        $this->assertNotNull($request);
+        $expected->forRequest($request);
 
         $this->assertEquals($expected, $response);
     }

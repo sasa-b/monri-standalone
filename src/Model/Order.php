@@ -8,13 +8,13 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model;
+namespace Sco\Monri\Model;
 
-use SasaB\Monri\Arrayable;
-use SasaB\Monri\Model\Order\Amount;
-use SasaB\Monri\Model\Order\Currency;
-use SasaB\Monri\Model\Order\OrderInfo;
-use SasaB\Monri\Model\Order\OrderNumber;
+use Sco\Monri\Arrayable;
+use Sco\Monri\Model\Order\Amount;
+use Sco\Monri\Model\Order\Currency;
+use Sco\Monri\Model\Order\OrderInfo;
+use Sco\Monri\Model\Order\OrderNumber;
 
 final class Order implements Arrayable
 {

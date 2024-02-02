@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model;
+namespace Sco\Monri\Model;
 
 abstract class IntegerObject
 {

@@ -8,14 +8,13 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model;
+namespace Sco\Monri\Model;
 
-use SasaB\Monri\Arrayable;
-use SasaB\Monri\Model\Customer\Address;
-use SasaB\Monri\Model\Customer\Email;
-use SasaB\Monri\Model\Customer\FullName;
-use SasaB\Monri\Model\Customer\Phone;
-
+use Sco\Monri\Arrayable;
+use Sco\Monri\Model\Customer\Address;
+use Sco\Monri\Model\Customer\Email;
+use Sco\Monri\Model\Customer\FullName;
+use Sco\Monri\Model\Customer\Phone;
 
 final class Customer implements Arrayable
 {

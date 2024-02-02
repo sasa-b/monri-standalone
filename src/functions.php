@@ -8,26 +8,20 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri {
+namespace Sco\Monri {
 
     if (!function_exists('env')) {
-        function env(string $key, $default = null)
+        function env(string $key, mixed $default = null): mixed
         {
             $value = trim((string)getenv($key));
 
-            switch ($value) {
-                case 'true':
-                    return true;
-                case 'false':
-                    return false;
-                case '1':
-                case '0':
-                    return (int)$value;
-                case 'null':
-                    return $default;
-            }
-
-            return $value ?: $default;
+            return match ($value) {
+                'true' => true,
+                'false' => false,
+                '1', '0' => (int)$value,
+                'null' => $default,
+                default => $value ?: $default,
+            };
         }
     }
 

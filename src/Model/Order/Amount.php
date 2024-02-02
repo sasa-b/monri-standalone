@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model\Order;
+namespace Sco\Monri\Model\Order;
 
-use SasaB\Monri\Model\IntegerObject;
+use Sco\Monri\Model\IntegerObject;
 use Webmozart\Assert\Assert;
 
 final class Amount extends IntegerObject

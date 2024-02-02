@@ -6,9 +6,9 @@
  * Time: 22:54
  */
 
-namespace SasaB\Monri\Client\Exception;
+namespace Sco\Monri\Client\Exception;
 
-use SasaB\Monri\Client\Request;
+use Sco\Monri\Client\Request;
 
 final class MissingRequiredFieldException extends \InvalidArgumentException
 {

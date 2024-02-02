@@ -6,8 +6,7 @@
  * Time: 15:21
  */
 
-namespace SasaB\Monri\Tests;
-
+namespace Sco\Monri\Tests;
 
 abstract class MockXmlResponse
 {

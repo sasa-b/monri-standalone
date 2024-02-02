@@ -6,10 +6,9 @@
  * Time: 09:02
  */
 
-namespace SasaB\Monri\Model\Customer;
+namespace Sco\Monri\Model\Customer;
 
-
-use SasaB\Monri\Model\StringObject;
+use Sco\Monri\Model\StringObject;
 use Webmozart\Assert\Assert;
 
 final class Email extends StringObject

@@ -6,9 +6,9 @@
  * Time: 09:03
  */
 
-namespace SasaB\Monri\Model\Customer;
+namespace Sco\Monri\Model\Customer;
 
-use SasaB\Monri\Arrayable;
+use Sco\Monri\Arrayable;
 use Webmozart\Assert\Assert;
 
 final class Address implements Arrayable
@@ -62,7 +62,10 @@ final class Address implements Arrayable
 
     public function setAddress(string $address): self
     {
-        array_map(fn ($name) => Assert::alnum($name, 'Invalid city value. Expected alphanumeric. Got: %s'), preg_split('/\s+/', $address));
+        array_map(
+            static fn (string $name) => Assert::alnum($name, 'Invalid city value. Expected alphanumeric. Got: %s'),
+            preg_split('/\s+/', $address) ?: ['']
+        );
         Assert::lengthBetween($address, 3, 100, 'Invalid address length. Must be between 3-100 characters');
         $this->address = $address;
         return $this;
@@ -75,7 +78,10 @@ final class Address implements Arrayable
 
     public function setCity(string $city): self
     {
-        array_map(fn ($name) => Assert::alnum($name, 'Invalid city value. Expected alphanumeric. Got: %s'), preg_split('/\s+/', $city));
+        array_map(
+            static fn ($name) => Assert::alnum($name, 'Invalid city value. Expected alphanumeric. Got: %s'),
+            preg_split('/\s+/', $city) ?: ['']
+        );
         Assert::lengthBetween($city, 3, 30, 'Invalid city length. Must be between 3-30 characters');
         $this->city = $city;
         return $this;

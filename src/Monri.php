@@ -8,15 +8,15 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri;
+namespace Sco\Monri;
 
-use SasaB\Monri\Client\Client;
-use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Response;
-use SasaB\Monri\Client\TransactionType;
+use Sco\Monri\Client\Client;
+use Sco\Monri\Client\Request;
+use Sco\Monri\Client\Response;
+use Sco\Monri\Client\TransactionType;
 
-use SasaB\Monri\Model\Order;
-use SasaB\Monri\Model\Customer;
+use Sco\Monri\Model\Customer;
+use Sco\Monri\Model\Order;
 use Webmozart\Assert\Assert;
 
 final class Monri

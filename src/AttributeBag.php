@@ -8,25 +8,20 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri;
+namespace Sco\Monri;
 
 abstract class AttributeBag implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-    protected array $attributes = [];
-
     protected static bool $softUnset = false;
 
-    public function __construct(array $attributes = [])
-    {
-        $this->attributes = $attributes;
-    }
+    public function __construct(protected array $attributes = []) {}
 
-    public function get(string $key, $default)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->offsetGet($key) ?? $default;
     }
 
-    public function set(string $key, $value): AttributeBag
+    public function set(string $key, mixed $value): AttributeBag
     {
         $this->attributes[$key] = $value;
         return $this;
@@ -64,7 +59,7 @@ abstract class AttributeBag implements \ArrayAccess, \IteratorAggregate, \Counta
         return array_key_exists($offset, $this->attributes);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->attributes[$offset] ?? null;
     }
@@ -85,27 +80,27 @@ abstract class AttributeBag implements \ArrayAccess, \IteratorAggregate, \Counta
         }
     }
 
-    public function __set(string $key, $value)
+    public function __set(string $key, mixed $value): void
     {
         $this->offsetSet($key, $value);
     }
 
-    public function __isset(string $key)
+    public function __isset(string $key): bool
     {
         return $this->offsetExists($key);
     }
 
-    public function __get(string $key)
+    public function __get(string $key): mixed
     {
         return $this->offsetGet($key);
     }
 
-    public function __unset(string $key)
+    public function __unset(string $key): void
     {
         $this->offsetUnset($key);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->attributes;
     }

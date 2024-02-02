@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model\Order;
+namespace Sco\Monri\Model\Order;
 
-use SasaB\Monri\Model\StringObject;
+use Sco\Monri\Model\StringObject;
 use Webmozart\Assert\Assert;
 
 final class OrderInfo extends StringObject

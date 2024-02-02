@@ -1,0 +1,15 @@
+includes:
+    - ../../vendor/phpstan/phpstan-phpunit/extension.neon
+    - ../../vendor/phpstan/phpstan-webmozart-assert/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - ../../src/
+        - ../../tests/
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    inferPrivatePropertyTypeFromConstructor: true
+
+

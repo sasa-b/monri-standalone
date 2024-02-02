@@ -6,7 +6,7 @@
  * Time: 17:56
  */
 
-namespace SasaB\Monri\Client;
+namespace Sco\Monri\Client;
 
 interface Request
 {

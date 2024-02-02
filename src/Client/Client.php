@@ -8,23 +8,22 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Client;
+namespace Sco\Monri\Client;
 
-use SasaB\Monri\Client\Request\Authorize;
-use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
-use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
-use SasaB\Monri\Client\Request\Form;
-use SasaB\Monri\Client\Request\Purchase;
-use SasaB\Monri\Client\Request\Xml as XmlRequest;
-use SasaB\Monri\Client\Response\Html;
-use SasaB\Monri\Client\Response\Xml;
+use Sco\Monri\Client\Request\Authorize;
+use Sco\Monri\Client\Request\Concerns\CanValidateForm;
+use Sco\Monri\Client\Request\Concerns\CanValidateXml;
+use Sco\Monri\Client\Request\Form;
+use Sco\Monri\Client\Request\Purchase;
+use Sco\Monri\Client\Request\Xml as XmlRequest;
+use Sco\Monri\Client\Response\Html;
+use Sco\Monri\Client\Response\Xml;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpClient\Response\CurlResponse;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
-final class Client
+final readonly class Client
 {
     use CanValidateForm;
     use CanValidateXml;
@@ -41,42 +40,39 @@ final class Client
         TransactionType::VOID          => '/transactions/:order_number/void.xml'
     ];
 
-    private HttpClientInterface $client;
-    private Serializer $deserializer;
+    public function __construct(
+        private HttpClientInterface $client,
+        private Serializer $serializer,
+    ) {}
 
-    public function __construct(HttpClientInterface $client)
-    {
-        $this->client = $client;
-    }
-
-    public static function new(string $url = self::TEST_URL): self
+    public static function new(string $url, Serializer $serializer): self
     {
         Assert::inArray($url, [self::TEST_URL, self::PROD_URL, self::LOCAL_URL], 'Invalid url. Expected '.self::TEST_URL.' or '.self::PROD_URL.'. Got: %s');
-        return new self(HttpClient::createForBaseUri($url));
+
+        return new self(HttpClient::createForBaseUri($url), $serializer);
     }
 
     public static function dev(): self
     {
-        return self::new();
+        return self::new(self::TEST_URL, new Serializer());
     }
 
     public static function prod(): self
     {
-        return self::new(self::PROD_URL);
+        return self::new(self::PROD_URL, new Serializer());
     }
 
     public static function test(): self
     {
-        return self::new(self::LOCAL_URL);
+        return self::new(self::LOCAL_URL, new Serializer());
     }
 
     /**
      * @throws HttpExceptionInterface
-     * @return CurlResponse|Response
      */
-    public function request(Request $request)
+    public function request(Request $request): Response
     {
-        $type= $request->getType();
+        $type = $request->getType();
         $body = $request->getBody();
 
         $path = self::PATH[$type];
@@ -141,14 +137,13 @@ final class Client
             } else {
                 $response = Html::fromCurl($response);
             }
-            $response->setRequest($request);
+            $response->forRequest($request);
         } catch (HttpExceptionInterface $e) {
             $response = $e->getResponse();
-            if ($response->getStatusCode() === 406) {
-                $response = $this->deserializer->deserializeXml($response->getContent(false));
-            } else {
+            if ($response->getStatusCode() !== 406) {
                 throw $e;
             }
+            $response = $this->serializer->deserializeXml($response->getContent(false));
         }
         return $response;
     }

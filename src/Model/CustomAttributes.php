@@ -8,12 +8,10 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Model;
+namespace Sco\Monri\Model;
 
-
-use SasaB\Monri\AttributeBag;
+use Sco\Monri\AttributeBag;
 
 final class CustomAttributes extends AttributeBag
 {
-
 }

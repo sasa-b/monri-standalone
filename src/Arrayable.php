@@ -6,7 +6,7 @@
  * Time: 12:56
  */
 
-namespace SasaB\Monri;
+namespace Sco\Monri;
 
 interface Arrayable
 {

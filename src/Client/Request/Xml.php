@@ -6,19 +6,19 @@
  * Time: 22:40
  */
 
-namespace SasaB\Monri\Client\Request;
+namespace Sco\Monri\Client\Request;
 
-use SasaB\Monri\Arrayable;
-use SasaB\Monri\CanDigest;
-use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Request\Concerns\CanValidateXml;
-use SasaB\Monri\Client\TransactionType;
-use SasaB\Monri\Model\Order;
+use Sco\Monri\Arrayable;
+use Sco\Monri\CanDigest;
+use Sco\Monri\Client\Request;
+use Sco\Monri\Client\Request\Concerns\CanValidateXml;
+use Sco\Monri\Client\TransactionType;
+use Sco\Monri\Model\Order;
 use Webmozart\Assert\Assert;
 
 /**
  * Class Xml
- * @package SasaB\Monri\Client\Request
+ * @package Sco\Monri\Client\Request
  *
  * <?xml version="1.0" encoding="UTF-8"?>
  * <transaction>

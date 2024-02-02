@@ -6,11 +6,10 @@
  * Time: 19:24
  */
 
-namespace SasaB\Monri\Client\Response;
+namespace Sco\Monri\Client\Response;
 
-
-use SasaB\Monri\Arrayable;
-use SasaB\Monri\AttributeBag;
+use Sco\Monri\Arrayable;
+use Sco\Monri\AttributeBag;
 
 final class Json extends AttributeBag implements Arrayable
 {

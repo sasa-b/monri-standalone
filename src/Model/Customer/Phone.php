@@ -6,10 +6,9 @@
  * Time: 13:43
  */
 
-namespace SasaB\Monri\Model\Customer;
+namespace Sco\Monri\Model\Customer;
 
-
-use SasaB\Monri\Model\StringObject;
+use Sco\Monri\Model\StringObject;
 use Webmozart\Assert\Assert;
 
 final class Phone extends StringObject

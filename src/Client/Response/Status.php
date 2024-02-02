@@ -6,8 +6,7 @@
  * Time: 19:27
  */
 
-namespace SasaB\Monri\Client\Response;
-
+namespace Sco\Monri\Client\Response;
 
 interface Status
 {

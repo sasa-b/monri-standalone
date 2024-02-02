@@ -6,31 +6,28 @@
  * Time: 14:32
  */
 
-namespace SasaB\Monri\Client\Response;
+namespace Sco\Monri\Client\Response;
 
-
-use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Response;
-use Symfony\Component\HttpClient\Response\CurlResponse;
+use Sco\Monri\Client\Request;
+use Sco\Monri\Client\Response;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class Html implements Response
 {
     private Request $request;
-    private string $content;
 
-    private function __construct(string $content)
-    {
-        $this->content = $content;
-    }
+    private function __construct(private readonly string $content) {}
 
-    public static function fromCurl(CurlResponse $response): self
+    public static function fromCurl(ResponseInterface $response): self
     {
         return new self($response->getContent());
     }
 
-    public function setRequest(Request $request): void
+    public function forRequest(Request $request): self
     {
         $this->request = $request;
+
+        return $this;
     }
 
     public function getRequest(): Request

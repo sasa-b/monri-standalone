@@ -6,8 +6,7 @@
  * Time: 12:11
  */
 
-namespace SasaB\Monri\Client;
-
+namespace Sco\Monri\Client;
 
 interface TransactionType
 {

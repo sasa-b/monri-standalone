@@ -6,8 +6,7 @@
  * Time: 22:58
  */
 
-namespace SasaB\Monri;
-
+namespace Sco\Monri;
 
 trait CanDigest
 {

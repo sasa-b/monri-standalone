@@ -6,12 +6,12 @@
  * Time: 19:09
  */
 
-namespace SasaB\Monri\Client\Request;
+namespace Sco\Monri\Client\Request;
 
-use SasaB\Monri\Client\TransactionType;
-use SasaB\Monri\Model\Customer;
-use SasaB\Monri\Model\Order;
-use SasaB\Monri\Options;
+use Sco\Monri\Client\TransactionType;
+use Sco\Monri\Model\Customer;
+use Sco\Monri\Model\Order;
+use Sco\Monri\Options;
 
 final class Authorize extends Form
 {

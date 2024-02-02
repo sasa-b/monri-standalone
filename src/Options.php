@@ -8,14 +8,14 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri;
+namespace Sco\Monri;
 
-use SasaB\Monri\Client\Language;
-use SasaB\Monri\Model\CardBrands;
+use Sco\Monri\Client\Language;
+use Sco\Monri\Model\CardBrands;
 
 /**
  * Class Options
- * @package SasaB\Monri\Api
+ * @package Sco\Monri\Api
  * @property bool $moto
  * @property int $number_of_installments
  * @property bool $tokenize_pan

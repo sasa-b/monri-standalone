@@ -6,13 +6,13 @@
  * Time: 11:06
  */
 
-use SasaB\Monri\Client\TransactionType;
-use SasaB\Monri\Tests\MockXmlResponse;
+use Sco\Monri\Client\TransactionType;
+use Sco\Monri\Tests\MockXmlResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-function form_handler(Request $request)
+function form_handler(Request $request): void
 {
     echo "Form Handler";
     parse_str($request->getContent(), $body);
@@ -28,25 +28,25 @@ function form_handler(Request $request)
     header("Location: $redirect");
 }
 
-function capture_handler(Request $request, string $orderNumber)
+function capture_handler(Request $request, string $orderNumber): void
 {
     header('Content-Type: application/xml');
     echo MockXmlResponse::capture();
 }
 
-function refund_handler(Request $request, string $orderNumber)
+function refund_handler(Request $request, string $orderNumber): void
 {
     header('Content-Type: application/xml');
     echo MockXmlResponse::refund();
 }
 
-function void_handler(Request $request, string $orderNumber)
+function void_handler(Request $request, string $orderNumber): void
 {
     header('Content-Type: application/xml');
     echo MockXmlResponse::void();
 }
 
-function success_callback_handler(Request $request)
+function success_callback_handler(Request $request): void
 {
     $success = [
         'acquirer'               => 'integration_acq',
@@ -101,6 +101,7 @@ function router(Request $request): void
     $handler = $routes[$request->getPathInfo()] ?? null;
 
     if ($handler) {
+        // @phpstan-ignore-next-line
         $handler($request);
         die;
     }
@@ -109,7 +110,7 @@ function router(Request $request): void
         $matches = [];
         $regex = str_replace(':order_number', '(\w+)', $path);
         if (preg_match("#^$regex$#", $request->getPathInfo(), $matches)) {
-            echo $handler($request, $matches[1]);
+            $handler($request, $matches[1]);
             die;
         }
     }

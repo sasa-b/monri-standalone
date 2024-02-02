@@ -6,9 +6,9 @@
  * Time: 19:37
  */
 
-namespace SasaB\Monri\Client;
+namespace Sco\Monri\Client;
 
-use SasaB\Monri\Client\Response\Xml;
+use Sco\Monri\Client\Response\Xml;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -27,7 +27,13 @@ final class Serializer
         );
     }
 
-    private function deserialize(string $data, string $class, string $format, array $context)
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     * @return T
+     */
+    private function deserialize(string $data, string $class, string $format, array $context): mixed
     {
         Assert::classExists($class, 'Invalid class provided. %s does not exist');
         Assert::inArray($format, ['json', 'xml'], 'Invalid format provided. Expected xml or json. Got %s');
@@ -37,7 +43,7 @@ final class Serializer
 
     public function deserializeXml(string $data, array $context = []): Xml
     {
-        $data = preg_replace('/type="\w+"/', '', $data);
+        $data = (string) preg_replace('/type="\w+"/', '', $data);
 
         return $this->deserialize($data, Xml::class, 'xml', $context);
     }

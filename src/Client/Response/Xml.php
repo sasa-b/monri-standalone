@@ -8,15 +8,15 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Client\Response;
+namespace Sco\Monri\Client\Response;
 
-use SasaB\Monri\Client\Serializer;
-use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Response;
+use Sco\Monri\Client\Request;
+use Sco\Monri\Client\Response;
+use Sco\Monri\Client\Serializer;
 
 /**
  * Class Xml
- * @package SasaB\Monri\Client\Response
+ * @package Sco\Monri\Client\Response
  *
  * <?xml version="1.0" encoding="UTF-8"?>
  * <transaction>
@@ -230,25 +230,28 @@ final class Xml implements Response
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTimeImmutable|string $createdAt
-     */
-    public function setCreatedAt($createdAt): void
+    public function setCreatedAt(\DateTimeImmutable|string $createdAt): void
     {
         if (is_string($createdAt)) {
-            $this->createdAt = \DateTimeImmutable::createFromFormat(DATE_ATOM, $createdAt, new \DateTimeZone('Europe/Belgrade'));
+            $dateTime = \DateTimeImmutable::createFromFormat(DATE_ATOM, $createdAt);
+            if ($dateTime === false) {
+                throw new \InvalidArgumentException(\sprintf('Invalid date format %s, expected %s', $createdAt, DATE_ATOM));
+            }
+            $this->createdAt = $dateTime;
         } else {
             $this->createdAt = $createdAt;
         }
     }
 
-    public function getRequest(): Request
+    public function getRequest(): ?Request
     {
         return $this->request;
     }
 
-    public function setRequest(Request $request): void
+    public function forRequest(Request $request): self
     {
         $this->request = $request;
+
+        return $this;
     }
 }

@@ -6,7 +6,7 @@
  * Time: 23:22
  */
 
-namespace SasaB\Monri\Model;
+namespace Sco\Monri\Model;
 
 final class CardBrands
 {

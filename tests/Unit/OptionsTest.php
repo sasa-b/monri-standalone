@@ -6,12 +6,10 @@
  * Time: 00:47
  */
 
-namespace SasaB\Monri\Tests\Unit;
-
+namespace Sco\Monri\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
 {
-
 }

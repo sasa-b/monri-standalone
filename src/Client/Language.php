@@ -6,8 +6,7 @@
  * Time: 16:22
  */
 
-namespace SasaB\Monri\Client;
-
+namespace Sco\Monri\Client;
 
 interface Language
 {

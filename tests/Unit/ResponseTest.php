@@ -6,15 +6,15 @@
  * Time: 00:46
  */
 
-namespace SasaB\Monri\Tests\Unit;
+namespace Sco\Monri\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use SasaB\Monri\Client\Serializer;
-use SasaB\Monri\Client\Response\Xml;
+use Sco\Monri\Client\Response\Xml;
+use Sco\Monri\Client\Serializer;
 
 class ResponseTest extends TestCase
 {
-    public function test_it_can_be_deserialized_from_xml()
+    public function test_it_can_be_deserialized_from_xml(): void
     {
         $deserializer = new Serializer();
 

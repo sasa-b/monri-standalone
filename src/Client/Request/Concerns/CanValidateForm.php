@@ -6,11 +6,10 @@
  * Time: 23:07
  */
 
-namespace SasaB\Monri\Client\Request\Concerns;
+namespace Sco\Monri\Client\Request\Concerns;
 
-
-use SasaB\Monri\Client\Exception\MissingRequiredFieldException;
-use SasaB\Monri\Client\TransactionType;
+use Sco\Monri\Client\Exception\MissingRequiredFieldException;
+use Sco\Monri\Client\TransactionType;
 use Webmozart\Assert\Assert;
 
 trait CanValidateForm

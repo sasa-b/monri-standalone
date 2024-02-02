@@ -6,16 +6,13 @@
  * Time: 19:53
  */
 
-namespace SasaB\Monri\Client;
+namespace Sco\Monri\Client;
 
 interface Response
 {
-    public function setRequest(Request $request): void;
+    public function forRequest(Request $request): self;
 
-    public function getRequest(): Request;
+    public function getRequest(): ?Request;
 
-    /**
-     * @return array|string
-     */
-    public function getBody();
+    public function getBody(): array|string;
 }

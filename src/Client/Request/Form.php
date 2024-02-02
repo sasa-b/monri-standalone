@@ -8,17 +8,17 @@
 
 declare(strict_types=1);
 
-namespace SasaB\Monri\Client\Request;
+namespace Sco\Monri\Client\Request;
 
-use SasaB\Monri\Arrayable;
-use SasaB\Monri\CanDigest;
-use SasaB\Monri\Client\Exception\MissingRequiredFieldException;
-use SasaB\Monri\Client\Request;
-use SasaB\Monri\Client\Request\Concerns\CanValidateForm;
-use SasaB\Monri\Client\TransactionType;
-use SasaB\Monri\Model\Customer;
-use SasaB\Monri\Model\Order;
-use SasaB\Monri\Options;
+use Sco\Monri\Arrayable;
+use Sco\Monri\CanDigest;
+use Sco\Monri\Client\Exception\MissingRequiredFieldException;
+use Sco\Monri\Client\Request;
+use Sco\Monri\Client\Request\Concerns\CanValidateForm;
+use Sco\Monri\Client\TransactionType;
+use Sco\Monri\Model\Customer;
+use Sco\Monri\Model\Order;
+use Sco\Monri\Options;
 use Webmozart\Assert\Assert;
 
 abstract class Form implements Request, Arrayable
